@@ -25,8 +25,7 @@ public static class HotChocolateExtensions
 
             builder.BindRuntimeType(idType, typeof(StringType));
 
-            // ???
-            builder.AddConvention<FilterConventionExtension>(new FilterConventionExtension(
+            builder.AddConvention<IFilterConvention>(new FilterConventionExtension(
                 x => x.BindRuntimeType(idType, typeof(LongOperationFilterInputType))));
         }
 

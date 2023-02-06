@@ -4,9 +4,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddGraphQLServer()
-    .AddIdConverters()
+    .ModifyRequestOptions(
+        options => options.IncludeExceptionDetails = builder.Environment.IsDevelopment())
     .AddTypes()
-    .AddFiltering();
+    .AddFiltering()
+    .AddIdConverters();
 
 var app = builder.Build();
 app.MapGraphQL();
