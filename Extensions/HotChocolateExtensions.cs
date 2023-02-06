@@ -29,24 +29,6 @@ public static class HotChocolateExtensions
                 x => x.BindRuntimeType(idType, typeof(LongOperationFilterInputType))));
         }
 
-        // Id to long converter.
-        builder.AddTypeConverter((
-            Type source,
-            Type target,
-            [NotNullWhen(true)] out ChangeType? converter) =>
-        {
-            if (source.IsAssignableTo(typeof(IId)) && target == typeof(long))
-            {
-                converter = (input) => (long?)input;
-
-                return true;
-            }
-
-            converter = null;
-
-            return false;
-        });
-
         // Long to Id converter.
         builder.AddTypeConverter((
             Type source,
@@ -69,6 +51,24 @@ public static class HotChocolateExtensions
                         new object[] { (long)input },
                         null);
                 };
+
+                return true;
+            }
+
+            converter = null;
+
+            return false;
+        });
+
+        // Id to string converter.
+        builder.AddTypeConverter((
+            Type source,
+            Type target,
+            [NotNullWhen(true)] out ChangeType? converter) =>
+        {
+            if (source.IsAssignableTo(typeof(IId)) && target == typeof(string))
+            {
+                converter = (input) => input?.ToString();
 
                 return true;
             }

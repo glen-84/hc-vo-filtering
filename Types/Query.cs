@@ -8,5 +8,10 @@ public static class Query
 
     [UseFiltering]
     public static IQueryable<Book> GetBooks()
-        => new List<Book> { new(BookId.From(5294967295), "C# in depth.", new Author("Jon Skeet")) }.AsQueryable();
+        => new List<Book>
+        {
+            new(BookId.From(1), "Another.", new Author("John Doe")),
+            new(BookId.From(5294967295), "C# in depth.", new Author("Jon Skeet"))
+        }
+        .AsQueryable();
 }
