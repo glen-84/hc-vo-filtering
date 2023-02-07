@@ -19,15 +19,21 @@ public static class HotChocolateExtensions
         var idTypes = Assembly.GetExecutingAssembly().GetTypes()
             .Where(type => type.IsValueType && type.IsAssignableTo(typeof(IId)));
 
+        // Bind runtime type.
         foreach (var idType in idTypes)
         {
-            Console.WriteLine(idType.FullName);
-
-            builder.BindRuntimeType(idType, typeof(StringType));
-
-            builder.AddConvention<IFilterConvention>(new FilterConventionExtension(
-                x => x.BindRuntimeType(idType, typeof(LongOperationFilterInputType))));
+            builder.BindRuntimeType(idType, typeof(LongType));
         }
+
+        // Filter convention.
+        builder.AddConvention<IFilterConvention>(new FilterConventionExtension(
+            descriptor =>
+            {
+                foreach (var idType in idTypes)
+                {
+                    descriptor.BindRuntimeType(idType, typeof(LongOperationFilterInputType));
+                }
+            }));
 
         // Long to Id converter.
         builder.AddTypeConverter((
@@ -60,15 +66,15 @@ public static class HotChocolateExtensions
             return false;
         });
 
-        // Id to string converter.
+        // Id to long converter.
         builder.AddTypeConverter((
             Type source,
             Type target,
             [NotNullWhen(true)] out ChangeType? converter) =>
         {
-            if (source.IsAssignableTo(typeof(IId)) && target == typeof(string))
+            if (source.IsAssignableTo(typeof(IId)) && target == typeof(long))
             {
-                converter = (input) => input?.ToString();
+                converter = (input) => ((IId?)input)?.Value;
 
                 return true;
             }
